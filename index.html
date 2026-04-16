@@ -3,377 +3,737 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ai là triệu phú: Bài 50 Năng lượng tái tạo - KHTN 6</title>
+    <title>Ai Là Triệu Phú EDU 3.0 - Siêu Cấp</title>
+    <!-- Thư viện hỗ trợ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/polyfill/3.111.0/polyfill.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+        body { font-family: 'Roboto', sans-serif; background: #020617; color: white; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .bg-gradient-vtv3 { background: radial-gradient(circle at center, #001d3d 0%, #000814 100%); }
+        .gold-text { color: #ffc300; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
         
-        body { 
-            font-family: 'Roboto', sans-serif; 
-            background: #020617; 
+        /* Cố định khung hình điện thoại 9:16 chuyên nghiệp */
+        .mobile-frame { 
+            width: min(100vw, 420px); 
+            height: min(100vh, 746px); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            border: 2px solid #1e293b; 
+            box-shadow: 0 0 100px rgba(0,0,0,1); 
+            background: #000814;
+            overflow: hidden;
+            border-radius: 24px;
+        }
+        
+        /* Đồng bộ Font Size 14pt theo yêu cầu của Thầy */
+        #q-text, .option-btn, #q-number, #q-score-ui, .tf-btn, .info-label, .summary-text, .ms-text, .label-header { 
+            font-size: 14pt !important; 
+            font-weight: 700; 
+        }
+
+        #q-text { line-height: 1.35; margin-bottom: 0.8rem; text-align: left; }
+        .option-btn { 
+            background: linear-gradient(90deg, #003566 0%, #001d3d 100%); 
+            border: 2px solid #003566; 
+            transition: 0.1s; 
+            text-align: left; 
+            padding: 8px 14px; 
+            border-radius: 16px; 
+            width: 100%; 
             color: white; 
-            overflow-x: hidden;
-            height: 100vh;
-            /* Hình nền về chủ đề năng lượng tái tạo */
-            background-image: linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.85)), 
-                              url('https://images.unsplash.com/photo-1466611653911-95282fc365d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            display: flex; 
+            align-items: center; 
         }
-
-        /* Hiệu ứng lửa rực cháy */
-        .fire-bg {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: -1; opacity: 0.3;
-        }
-        .fire-particle {
-            position: absolute; bottom: -50px; background: linear-gradient(to top, #ff4500, #ff8c00, #ffff00);
-            width: 15px; height: 15px; border-radius: 50% 50% 20% 50%;
-            filter: blur(4px); animation: rise 3s infinite ease-out; transform: rotate(-45deg);
-        }
-        @keyframes rise {
-            0% { transform: translateY(0) scale(1) rotate(-45deg); opacity: 1; }
-            100% { transform: translateY(-110vh) scale(0.2) rotate(-45deg); opacity: 0; }
-        }
-
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 24px;
-        }
-
-        .help-btn {
-            width: 55px; height: 55px; border-radius: 50%; border: 2px solid #22c55e;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            transition: 0.3s; font-weight: bold; font-size: 14px; color: #22c55e;
-            background: rgba(0,0,0,0.3);
-        }
-        .help-btn:hover { background: #22c55e; color: #000; transform: scale(1.1); box-shadow: 0 0 15px #22c55e; }
-        .help-btn.used { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); pointer-events: none; }
-
-        .option-btn {
-            background: linear-gradient(to right, #1e293b, #0f172a); border: 2px solid #334155;
-            padding: 1.2rem; border-radius: 35px; cursor: pointer; transition: 0.2s; text-align: left;
-            display: flex; align-items: center;
-        }
-        .option-btn:hover:not(.disabled) { border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
-        .option-btn.selected { background: #22c55e !important; color: #000 !important; border-color: #22c55e !important; font-weight: 900; }
-        .option-btn.hidden { visibility: hidden; pointer-events: none; }
-
-        #wish-screen {
-            position: fixed; inset: 0; background: #000; z-index: 500;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-        }
-
-        #modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000;
-            display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-
-        .scratch-card {
-            background: #fff; width: 280px; height: 150px; border-radius: 15px;
-            position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
+        .option-btn:hover { border-color: #ffc300; transform: scale(1.01); }
+        .option-selected { background: #ffc300 !important; color: #000 !important; border-color: #ffd60a !important; }
+        .option-correct { background: #2ecc71 !important; color: white !important; border-color: #2ecc71 !important; }
+        .option-wrong { background: #e74c3c !important; color: white !important; border-color: #e74c3c !important; }
         
-        .progress-bar {
-            height: 4px; background: #334155; border-radius: 2px; flex-grow: 1; margin: 0 2px;
-        }
-        .progress-bar.active { background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        /* Thu nhỏ thanh cuộn */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+        /* Cột tiến trình sát lề trên 1cm và lề phải */
+        #right-panel { width: 18%; background: rgba(0,0,0,0.98); border-left: 1px solid rgba(255,255,255,0.1); padding-top: 1cm; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; }
+        #ladder-container { display: flex; flex-direction: column-reverse; width: 100%; }
+        
+        /* Khoảng cách câu và điểm 2mm */
+        .ladder-row { display: grid; grid-template-columns: 1rem 1fr; gap: 2mm; padding: 2px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 9px; font-weight: 700; color: #64748b; text-align: right; }
+        .ladder-row.active { background: #ffc300 !important; color: #000 !important; font-weight: 900; }
+        
+        .exam-grid { display: grid; grid-template-columns: 1fr; gap: 4px; padding: 5px; width: 100%; }
+        .exam-node { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px 0; text-align: center; font-size: 10px; font-weight: 900; cursor: pointer; color: #64748b; }
+        .exam-node.done { background: #10b981; color: white; }
+        .exam-node.current { border: 2px solid #ffc300; color: #ffc300; }
+
+        .digit-box { width: 36px; height: 48px; background: #001d3d; border: 2px solid #ffc300; border-radius: 10px; text-align: center; font-size: 20px; font-weight: 900; color: #fff; outline: none; }
+        .tf-btn { font-size: 13pt !important; padding: 2px 6px; border-radius: 6px; font-weight: 900; min-width: 45px; line-height: 1.2; }
+
+        .avatar-corner { width: 55px; height: 55px; border-radius: 50%; border: 3px solid #ffc300; overflow: hidden; background: #1e293b; }
+        
+        .fixed-copyright-footer { position: absolute; bottom: 0; width: 100%; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.9); border-top: 1px solid rgba(255,255,255,0.1); z-index: 5000; pointer-events: none; }
+        .footer-text { font-size: 8px; color: rgba(255,255,255,0.4); text-transform: uppercase; text-align: center; }
+
+        /* Vùng cào điểm số phủ lên bảng vinh danh */
+        #scratch-card-wrapper { position: relative; width: 100%; max-width: 350px; margin: 15px auto; border-radius: 35px; overflow: hidden; }
+        #scratch-canvas { position: absolute; top: 0; left: 0; z-index: 20; cursor: crosshair; touch-action: none; width: 100%; height: 100%; border-radius: 35px; }
+        #result-info-box { position: relative; z-index: 10; width: 100%; opacity: 0; /* Hiện rõ dần khi cào */ }
+
+        #modal-delete-confirm { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .delete-box { background: #1e293b; border: 4px solid #ef4444; padding: 25px; border-radius: 24px; width: 100%; max-width: 320px; text-align: center; }
+        
+        .hidden { display: none !important; }
+        .admin-table { font-size: 8px; width: 100%; border-collapse: collapse; background: white; color: black; }
+        .admin-table th { cursor: pointer; background: #0f172a; color: #ffc300; padding: 10px 4px; border: 1px solid #334155; }
+        .admin-table td { padding: 6px 3px; border: 1px solid #e2e8f0; text-align: center; font-weight: 600; }
+        
+        .milestone-modal { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,0.98); display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+        .milestone-box { border: 8px solid #ffc300; background: #b91c1c; padding: 30px; border-radius: 30px; width: 100%; max-width: 380px; }
     </style>
 </head>
 <body>
 
-    <div id="fire-container" class="fire-bg"></div>
+<div id="app" class="mobile-frame bg-gradient-vtv3">
+    <div class="fixed-copyright-footer"><div class="footer-text">Bản quyền thuộc về Trường THCS Thuỷ Phương, Thành phố Huế</div></div>
 
-    <!-- Âm thanh -->
-    <audio id="s-click" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-    <audio id="s-win" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
-    <audio id="s-lose" src="https://assets.mixkit.co/active_storage/sfx/253/253-preview.mp3"></audio>
+    <!-- MÀN HÌNH CHỦ -->
+    <div id="screen-home" class="flex-1 flex flex-col p-5 items-center justify-center space-y-4 text-center overflow-y-auto">
+        <div class="text-center">
+            <h1 class="text-2xl font-black gold-text italic drop-shadow-lg uppercase">Ai Là Triệu Phú Edu 3.0</h1>
+            <div class="bg-white text-blue-900 px-5 py-0.5 rounded-full font-black text-xs inline-block shadow-lg mt-1 tracking-widest uppercase"> 49. NĂNG LƯỢNG HAO PHÍ</div>
+        </div>
 
-    <!-- Màn hình lời chúc -->
-    <div id="wish-screen">
-        <div id="wish-fire-container" class="fire-bg" style="opacity: 0.8;"></div>
-        <h1 class="text-6xl md:text-8xl font-black text-green-500 italic text-center animate-pulse tracking-tighter shadow-green-500/50">
-            CHÚC BẠN<br>THI TỐT!
-        </h1>
-        <p class="text-white mt-4 font-bold tracking-widest uppercase">Hãy cùng bảo vệ Trái đất</p>
-    </div>
+        <div class="flex space-x-5 w-full justify-center">
+            <div class="flex flex-col items-center">
+                <div class="rounded-full border-4 border-yellow-500 overflow-hidden cursor-pointer bg-slate-800 shadow-2xl" style="width: 75px; height: 75px;" onclick="document.getElementById('file-mc').click()">
+                    <img id="view-mc" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sam" class="w-full h-full object-cover">
+                </div>
+                <span class="text-[8px] font-bold mt-1 opacity-70 uppercase text-white">Ảnh MC</span>
+                <input type="file" id="file-mc" class="hidden" accept="image/*" onchange="window.previewImg(this, 'view-mc', 'mc')">
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="rounded-full border-4 border-blue-500 overflow-hidden cursor-pointer bg-slate-800 shadow-2xl" style="width: 75px; height: 75px;" onclick="document.getElementById('file-player').click()">
+                    <img id="view-player" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-full h-full object-cover">
+                </div>
+                <span class="text-[8px] font-bold mt-1 opacity-70 uppercase text-white">Thí sinh</span>
+                <input type="file" id="file-player" class="hidden" accept="image/*" onchange="window.previewImg(this, 'view-player', 'player')">
+            </div>
+        </div>
 
-    <!-- Modal Giải thích -->
-    <div id="modal-overlay">
-        <div class="glass-panel p-8 max-w-lg w-full text-center border-green-500/50 border-2 shadow-2xl">
-            <h3 id="m-title" class="text-2xl font-black text-green-400 mb-4 uppercase italic"></h3>
-            <div id="m-status-icon" class="text-6xl mb-4"></div>
-            <div id="m-body" class="text-lg mb-8 text-slate-100 leading-relaxed text-left bg-slate-900/50 p-4 rounded-xl"></div>
-            <button onclick="handleModalAction()" id="m-btn" class="w-full bg-green-600 py-4 rounded-xl font-black hover:bg-green-500 transition-all uppercase text-white shadow-lg shadow-green-900">Tiếp tục</button>
+        <div class="w-full space-y-2 glass p-5 rounded-[25px]">
+            <input type="text" id="in-name" placeholder="Họ và tên" class="w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
+            <input type="text" id="in-sbd" placeholder="Số báo danh" class="w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
+            <div class="grid grid-cols-3 gap-2">
+                <input type="text" id="in-class" placeholder="Lớp" class="w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
+                <input type="text" id="in-school" placeholder="Trường" class="col-span-2 w-full p-2.5 bg-white/10 rounded-lg outline-none text-white font-bold border border-white/10 text-sm">
+            </div>
+        </div>
+
+        <div class="w-full space-y-2">
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="window.startGame('LUYEN_TAP')" class="bg-blue-600 py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all uppercase text-white">Luyện Tập</button>
+                <button onclick="window.startGame('KIEM_TRA')" class="bg-green-600 py-4 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all uppercase text-white">Kiểm Tra</button>
+            </div>
+            <button onclick="window.startGame('GHE_NONG')" class="w-full bg-red-600 py-4.5 rounded-xl font-black text-lg shadow-xl active:scale-95 transition-all uppercase text-white font-black">Ngồi Vào Ghế Nóng</button>
+        </div>
+
+        <div class="flex space-x-2 w-full pb-8 text-white">
+            <button onclick="window.showModal('modal-rules')" class="flex-1 bg-slate-700 py-2.5 rounded-lg font-bold text-[9px] uppercase">Thể lệ</button>
+            <button onclick="window.showModal('modal-login')" class="flex-1 bg-slate-800 py-2.5 rounded-lg font-bold text-[9px] uppercase">Quản trị</button>
         </div>
     </div>
 
-    <div class="relative z-10 w-full min-h-screen flex flex-col items-center py-6 px-4">
+    <!-- MÀN HÌNH CHƠI -->
+    <div id="screen-game" class="hidden flex-1 flex flex-col overflow-hidden">
+        <header class="p-2.5 bg-black/80 border-b border-white/10 flex justify-between items-center z-10">
+            <div class="flex items-center space-x-2">
+                <div class="avatar-corner border-yellow-500"><img id="game-mc-img" src="" class="w-full h-full object-cover"></div>
+                <div class="text-[8px] leading-tight">
+                    <p class="gold-text font-black uppercase">MC Truyền Hình</p>
+                    <p id="ui-timer" class="text-red-500 font-black text-[10px]">180s</p>
+                </div>
+            </div>
+            <div id="help-btns" class="flex space-x-1">
+                <button id="h-5050" onclick="window.useHelp('5050')" class="w-8 h-8 rounded-full bg-blue-700 border-2 border-white/20 text-[8px] font-black text-white">50:50</button>
+                <button id="h-audience" onclick="window.useHelp('audience')" class="w-8 h-8 rounded-full bg-blue-700 border-2 border-white/20 text-sm">👤</button>
+                <button id="h-call" onclick="window.useHelp('call')" class="w-8 h-8 rounded-full bg-blue-700 border-2 border-white/20 text-sm">📞</button>
+                <button id="h-expert" onclick="window.useHelp('expert')" class="hidden w-8 h-8 rounded-full bg-indigo-700 border-2 border-white/20 text-sm">🎓</button>
+            </div>
+            <div class="flex items-center space-x-1.5 text-right">
+                <div class="text-[8px] leading-tight overflow-hidden text-white">
+                    <p id="ui-p-name" class="font-black truncate w-24 uppercase text-blue-400 font-black"></p>
+                    <p id="ui-p-info" class="opacity-80"></p>
+                    <p id="ui-game-mode" class="opacity-100 gold-text font-black uppercase text-[7pt]"></p>
+                </div>
+                <div class="avatar-corner border-blue-500"><img id="game-player-img" src="" class="w-full h-full object-cover"></div>
+            </div>
+        </header>
+
+        <div class="flex flex-1 overflow-hidden">
+            <div class="flex-1 p-3 overflow-y-auto flex flex-col relative" id="game-content">
+                <div class="flex justify-between items-end border-b border-white/20 pb-1 mb-2">
+                    <span id="q-number" class="label-header gold-text italic font-black">CÂU 1</span>
+                    <span id="q-score-ui" class="label-header opacity-70 uppercase text-white font-black">ĐIỂM: 0.0</span>
+                </div>
+                <div id="q-text" class="glass p-4 rounded-xl text-white"></div>
+                <div id="q-options" class="grid grid-cols-1 gap-2"></div>
+                <div id="q-hint-box" class="hidden mt-4 p-4 bg-yellow-400/10 border border-yellow-400/30 rounded-2xl italic text-[10px] text-yellow-100 shadow-lg text-white font-black"></div>
+                <div class="h-32 shrink-0"></div>
+            </div>
+            <div id="right-panel">
+                <div id="ladder-container"></div>
+                <div id="exam-nav" class="hidden flex-1 overflow-y-auto">
+                    <div class="exam-grid" id="exam-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="p-3 pb-8 bg-black border-t border-white/10 flex items-center justify-between z-20">
+            <button id="btn-stop" onclick="window.confirmStop()" class="hidden bg-red-900/40 text-red-400 px-3 py-2 rounded-lg font-black text-[9px] uppercase border border-red-500/30">Dừng chơi</button>
+            <div class="flex-1"></div>
+            <button id="btn-next" onclick="window.nextQ()" class="hidden bg-green-600 text-white px-6 py-3 rounded-lg font-black text-xs uppercase shadow-lg text-white">Tiếp tục</button>
+            <button id="btn-submit" onclick="window.submitAns()" class="bg-yellow-500 text-black px-8 py-3 rounded-lg font-black text-xs uppercase shadow-lg text-black font-black">Gửi kết quả</button>
+        </footer>
+    </div>
+
+    <!-- MÀN HÌNH VINH DANH -->
+    <div id="screen-result" class="hidden flex-1 flex flex-col items-center justify-center p-6 space-y-4 text-center overflow-y-auto">
+        <h1 class="text-2xl font-black gold-text italic uppercase">AI LÀ TRIỆU PHÚ EDU 3.0</h1>
         
-        <!-- ĐĂNG NHẬP -->
-        <div id="login-screen" class="glass-panel p-8 w-full max-w-md text-center mt-10 shadow-2xl border-white/10">
-            <div class="text-7xl mb-6 drop-shadow-lg">🌞</div>
-            <h1 class="text-3xl font-black mb-1 uppercase text-green-400">Ai là triệu phú</h1>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-10 italic">Bài 50: Năng lượng tái tạo</p>
-            
-            <div class="space-y-4 text-left">
-                <input type="text" id="in-sbd" placeholder="SỐ BÁO DANH" class="w-full p-4 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-green-500 outline-none transition-all">
-                <input type="text" id="in-name" placeholder="HỌ VÀ TÊN" class="w-full p-4 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-green-500 outline-none transition-all">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="in-class" placeholder="LỚP" class="w-full p-4 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-green-500 outline-none transition-all">
-                    <input type="text" id="in-school" placeholder="TRƯỜNG" class="w-full p-4 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-green-500 outline-none transition-all">
+        <p id="scratch-msg" class="hidden text-yellow-400 font-black mb-2 animate-bounce uppercase text-[10px]">Hãy cào để biết kết quả!</p>
+        
+        <div id="scratch-card-wrapper" class="hidden">
+            <!-- Bảng kết quả nằm bên dưới lớp cào -->
+            <div id="result-info-box" class="glass p-6 rounded-[35px] w-full border-2 border-white/10 shadow-2xl">
+                <div id="res-summary" class="summary-text mb-3 leading-relaxed text-white"></div>
+                <div id="simple-score-view" class="relative inline-block">
+                    <span id="res-score" class="text-7xl font-black text-yellow-400 font-black">0.0</span>
+                    <span class="absolute -top-2 -right-4 bg-red-600 px-2 py-0.5 rounded-full text-[8px] font-black uppercase text-white font-black">Điểm</span>
                 </div>
-                <button onclick="startSequence()" class="w-full bg-green-600 hover:bg-green-500 text-white font-black py-5 rounded-2xl shadow-xl mt-6 transition-all active:scale-95 text-xl uppercase">
-                    Vào ngồi ghế nóng
-                </button>
+                <div id="res-rank" class="mt-4 gold-text font-black text-xl uppercase text-center"></div>
             </div>
+            <!-- Lớp phủ Canvas cào bạc -->
+            <canvas id="scratch-canvas"></canvas>
         </div>
 
-        <!-- CHƠI GAME -->
-        <div id="game-screen" class="hidden w-full max-w-4xl space-y-6">
-            <!-- Tiến trình -->
-            <div class="w-full flex px-2" id="progress-container"></div>
+        <button id="btn-show-hist" onclick="window.showHistory()" class="hidden w-full bg-blue-700 p-4 rounded-[20px] font-black text-sm shadow-xl uppercase text-white font-black">Sổ tay tri thức</button>
+        <button onclick="location.reload()" class="w-full bg-slate-800 p-4 rounded-[20px] font-black text-sm shadow-xl uppercase text-white font-black">Về trang chủ</button>
+    </div>
 
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 glass-panel p-4 border-white/5">
-                <div class="flex flex-col">
-                    <span id="p-name" class="text-green-400 font-black text-lg"></span>
-                    <span id="p-school" class="text-[10px] text-slate-400 font-bold uppercase tracking-widest"></span>
-                </div>
-                <div class="flex gap-3">
-                    <div id="h-5050" onclick="help5050()" class="help-btn">50:50</div>
-                    <div id="h-aud" onclick="helpAudience()" class="help-btn">👥</div>
-                    <div id="h-call" onclick="helpCall()" class="help-btn">📞</div>
-                </div>
-                <div class="bg-green-600 text-black px-6 py-1 rounded-full font-black text-xl" id="q-idx">1/20</div>
-            </div>
-
-            <div class="glass-panel p-8 md:p-14 shadow-inner relative overflow-hidden min-h-[400px] flex flex-col justify-center">
-                <h2 id="q-text" class="text-2xl md:text-3xl font-black mb-12 text-center leading-relaxed italic"></h2>
-                <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-            </div>
-
-            <button onclick="checkAnswer()" class="w-full bg-blue-600 hover:bg-blue-500 py-6 rounded-3xl font-black text-3xl shadow-2xl transition-all uppercase">Chốt đáp án</button>
+    <!-- QUẢN TRỊ -->
+    <div id="screen-admin" class="hidden flex-1 flex flex-col bg-white text-black p-4 overflow-hidden text-black">
+        <div class="flex justify-between items-center mb-4 bg-slate-100 p-3 rounded-xl border border-slate-200">
+            <h2 class="font-black text-blue-900 uppercase text-xs">HỆ THỐNG QUẢN TRỊ</h2>
+            <button onclick="location.reload()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-[9px] font-black shadow-lg">THOÁT</button>
         </div>
-
-        <!-- KẾT QUẢ -->
-        <div id="result-screen" class="hidden glass-panel p-10 w-full max-w-md text-center border-blue-500/30">
-            <h2 class="text-4xl font-black text-blue-400 mb-8 italic uppercase tracking-widest">KẾT THÚC</h2>
-            <div class="scratch-card mx-auto mb-8 shadow-2xl border-4 border-blue-900">
-                <div id="scratch-off" onclick="this.style.opacity=0; setTimeout(()=>this.remove(),600)" class="absolute inset-0 bg-slate-600 flex flex-col items-center justify-center cursor-pointer z-10 transition-opacity duration-700">
-                    <span class="text-white font-black text-xl">CÀO ĐỂ XEM ĐIỂM</span>
-                </div>
-                <div class="text-slate-900">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase">Điểm số đạt được</p>
-                    <h3 id="f-score" class="text-8xl font-black text-blue-700">0</h3>
-                </div>
-            </div>
-            <p id="f-desc" class="text-slate-300 font-medium mb-10 italic"></p>
-            <button onclick="location.reload()" class="w-full py-5 bg-slate-800 hover:bg-slate-700 rounded-2xl font-black text-xl transition-all uppercase">Làm lại</button>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <button onclick="window.exportExcel()" class="bg-emerald-600 text-white py-3 rounded-lg font-black text-[9px] uppercase shadow-md text-white font-black">📊 XUẤT EXCEL (*.xlsx)</button>
+            <button onclick="window.showStats()" class="bg-indigo-600 text-white py-3 rounded-lg font-black text-[9px] uppercase shadow-md text-white font-black text-white">📈 THỐNG KÊ BIỂU ĐỒ</button>
+        </div>
+        <div class="flex-1 overflow-auto border-2 border-slate-200 rounded-2xl bg-slate-50 shadow-inner text-black">
+            <table class="admin-table w-full text-center">
+                <thead class="sticky top-0 bg-slate-200 font-black">
+                    <tr>
+                        <th onclick="window.sortAdmin('sbd')">SBD</th>
+                        <th onclick="window.sortAdmin('name')">Họ tên</th>
+                        <th onclick="window.sortAdmin('class')">Lớp</th>
+                        <th onclick="window.sortAdmin('school')">Trường</th>
+                        <th onclick="window.sortAdmin('score')">Điểm</th>
+                        <th>Xóa</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-tbody"></tbody>
+            </table>
         </div>
     </div>
 
-    <script>
-        // Nội dung 20 câu hỏi về Năng lượng tái tạo - Bài 50 KHTN 6
-        const quizData = [
-            // BIẾT (1-5)
-            { q: "Năng lượng tái tạo là nguồn năng lượng như thế nào?", a: ["Bị cạn kiệt khi sử dụng", "Liên tục được bổ sung từ nguồn tự nhiên", "Chỉ có thể dùng một lần", "Được tạo ra từ than đá"], c: 1, e: "Năng lượng tái tạo có sẵn trong thiên nhiên, liên tục được bổ sung nên gần như vô tận.", h: "Nó giống như ánh sáng mặt trời mỗi ngày." },
-            { q: "Nguồn năng lượng nào sau đây KHÔNG PHẢI là năng lượng tái tạo?", a: ["Năng lượng gió", "Năng lượng địa nhiệt", "Năng lượng dầu mỏ", "Năng lượng thủy triều"], c: 2, e: "Dầu mỏ là năng lượng hóa thạch, mất hàng triệu năm để hình thành và sẽ bị cạn kiệt.", h: "Hãy tìm nguồn năng lượng sẽ hết trong tương lai gần." },
-            { q: "Nguồn năng lượng nào được khai thác từ sức nóng bên trong Trái Đất?", a: ["Năng lượng gió", "Năng lượng địa nhiệt", "Năng lượng sinh khối", "Năng lượng mặt trời"], c: 1, e: "Địa nhiệt là năng lượng nhiệt được lưu trữ trong lòng đất, biểu hiện qua suối nước nóng, núi lửa.", h: "Chữ 'Địa' có nghĩa là đất." },
-            { q: "Cánh đồng quạt gió dùng để chuyển hóa năng lượng gió thành gì?", a: ["Nhiệt năng", "Hóa năng", "Điện năng", "Quang năng"], c: 2, e: "Gió làm quay cánh quạt, cánh quạt làm quay máy phát điện để tạo ra điện năng.", h: "Mục đích chính của các trạm điện gió." },
-            { q: "Vật liệu nào sau đây được gọi là năng lượng sinh khối?", a: ["Gỗ, rơm rạ, chất thải động vật", "Sắt, thép, đồng", "Khí gas hóa lỏng", "Than đá khô"], c: 0, e: "Sinh khối là các vật liệu có nguồn gốc từ sinh vật sống như cây cối, phế phẩm nông nghiệp.", h: "Những thứ liên quan đến hữu cơ." },
+    <!-- MODAL XÓA BẢO MẬT -->
+    <div id="modal-delete-confirm" class="hidden fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/95">
+        <div class="delete-box">
+            <p class="text-white font-bold mb-4 text-sm">Xác nhận mật khẩu Quản trị để xóa:</p>
+            <input type="password" id="delete-pass-input" placeholder="********" class="w-full p-3 bg-white/5 rounded-xl border border-red-500/30 mb-4 text-center text-white outline-none">
+            <div class="flex space-x-2">
+                <button onclick="window.cancelDelete()" class="flex-1 bg-slate-700 py-2.5 rounded-lg font-bold text-white text-xs">HỦY</button>
+                <button onclick="window.confirmDelete()" class="flex-1 bg-red-600 py-2.5 rounded-lg font-black text-white text-xs">XÓA</button>
+            </div>
+        </div>
+    </div>
 
-            // HIỂU (6-10)
-            { q: "Ưu điểm chính của việc sử dụng năng lượng tái tạo là gì?", a: ["Gây ô nhiễm nhiều hơn", "Rẻ tiền tuyệt đối", "Góp phần bảo vệ môi trường", "Dễ vận chuyển hơn xăng"], c: 2, e: "Sử dụng năng lượng sạch giúp giảm phát thải khí carbon và không gây ô nhiễm môi trường như than đá.", h: "Lợi ích cho bầu khí quyển." },
-            { q: "Tại sao ánh sáng mặt trời được coi là năng lượng tái tạo?", a: ["Vì nó rất sáng", "Vì nó không mất phí", "Vì nó tự bổ sung hàng ngày", "Vì nó làm nóng nước"], c: 2, e: "Mặt trời chiếu sáng liên tục và không thể bị con người dùng hết, nó tự tái tạo mỗi ngày.", h: "Đặc điểm về thời gian tồn tại." },
-            { q: "Thủy điện tạo ra điện dựa trên yếu tố nào của dòng nước?", a: ["Nhiệt độ nước", "Thế năng và động năng", "Màu sắc của nước", "Độ mặn của nước"], c: 1, e: "Dòng nước chảy từ trên cao xuống tạo ra năng lượng làm quay tua-bin.", h: "Nước phải chảy và đổ từ trên cao." },
-            { q: "Việc đốt nhiên liệu hóa thạch gây hại gì so với năng lượng tái tạo?", a: ["Tạo ra nhiều oxy", "Gây ra hiệu ứng nhà kính", "Làm Trái Đất mát hơn", "Không gây hại gì"], c: 1, e: "Đốt than và dầu mỏ thải ra khí CO2 gây nóng lên toàn cầu, trong khi năng lượng tái tạo thì không.", h: "Nó liên quan đến biến đổi khí hậu." },
-            { q: "Nhược điểm lớn nhất của năng lượng mặt trời là gì?", a: ["Quá nóng", "Phụ thuộc vào thời tiết và ban đêm", "Làm chết cây xanh", "Tạo ra quá nhiều điện"], c: 1, e: "Năng lượng mặt trời chỉ thu được khi có nắng, không hoạt động hiệu quả vào ban đêm hoặc trời mưa.", h: "Nó không ổn định liên tục." },
+    <!-- MODALS HỆ THỐNG -->
+    <div id="modal-login" class="hidden fixed inset-0 z-[100] bg-black/98 flex items-center justify-center p-8 text-black">
+        <div class="bg-slate-900 border-2 border-yellow-500/50 p-8 rounded-[40px] w-full max-w-xs text-center text-white">
+            <h3 class="gold-text font-black text-lg mb-6 uppercase text-center font-black">Xác thực Admin</h3>
+            <input type="password" id="admin-pass" placeholder="********" class="w-full p-3 bg-white/5 rounded-xl border border-red-500/30 mb-6 text-center text-white outline-none">
+            <div class="flex space-x-3">
+                <button onclick="window.hideModal('modal-login')" class="flex-1 bg-slate-700 p-2 rounded-lg font-bold text-white uppercase text-xs">Hủy</button>
+                <button onclick="window.checkAdmin()" class="flex-1 bg-yellow-500 text-black py-2 rounded-lg font-black uppercase text-xs text-white">Vào</button>
+            </div>
+        </div>
+    </div>
 
-            // VẬN DỤNG (11-20)
-            { q: "Gia đình bạn lắp đặt hệ thống pin mặt trời trên mái nhà. Đây là hành động gì?", a: ["Lãng phí tiền bạc", "Sử dụng năng lượng hóa thạch", "Sử dụng năng lượng tái tạo", "Sử dụng năng lượng hạt nhân"], c: 2, e: "Pin mặt trời giúp chuyển hóa ánh sáng mặt trời thành điện năng phục vụ sinh hoạt.", h: "Hành động này rất thân thiện với môi trường." },
-            { q: "Loại xăng sinh học E5 (chứa 5% ethanol) là ví dụ của việc vận dụng năng lượng gì?", a: ["Năng lượng thủy triều", "Năng lượng gió", "Năng lượng sinh khối", "Năng lượng địa nhiệt"], c: 2, e: "Ethanol được sản xuất từ nông sản (ngô, sắn), thuộc nhóm năng lượng sinh khối.", h: "Nhiên liệu từ thực vật." },
-            { q: "Tại sao các quốc gia trên thế giới đang chuyển sang dùng năng lượng tái tạo?", a: ["Vì nhiên liệu hóa thạch đang cạn kiệt", "Vì giá dầu đang giảm", "Vì nó làm tăng phát thải độc hại", "Vì nó không hiệu quả"], c: 0, e: "Nguồn than và dầu đang dần hết, đồng thời môi trường đang bị hủy hoại nên cần thay thế.", h: "Lý do về sự bền vững trong tương lai." },
-            { q: "Nguồn năng lượng nào thực chất bắt nguồn gián tiếp từ năng lượng mặt trời?", a: ["Gió", "Sinh khối", "Thủy năng (nước)", "Cả 3 phương án trên"], c: 3, e: "Mặt trời tạo ra gió (do chênh lệch nhiệt), giúp cây quang hợp (sinh khối) và làm nước bay hơi tạo mưa (thủy năng).", h: "Mặt trời là cội nguồn của hầu hết năng lượng." },
-            { q: "Để giảm biến đổi khí hậu, chúng ta nên ưu tiên phát triển ngành năng lượng nào?", a: ["Khai thác than đá mỏ", "Xây dựng nhà máy điện gió", "Sử dụng máy phát điện chạy xăng", "Đốt rừng làm củi"], c: 1, e: "Điện gió không phát thải khí nhà kính, giúp giảm tốc độ biến đổi khí hậu.", h: "Chọn phương án 'xanh' nhất." },
-            { q: "Quá trình quang hợp ở cây xanh chuyển hóa năng lượng như thế nào?", a: ["Nhiệt năng sang điện năng", "Quang năng sang hóa năng", "Hóa năng sang quang năng", "Điện năng sang hóa năng"], c: 1, e: "Cây xanh dùng ánh sáng (quang năng) để tổng hợp chất hữu cơ (hóa năng).", h: "Hấp thụ nắng để lớn lên." },
-            { q: "Thiết bị nào sau đây tận dụng năng lượng tái tạo trong gia đình?", a: ["Lò vi sóng", "Tủ lạnh", "Bình nước nóng năng lượng mặt trời", "Bếp gas"], c: 2, e: "Bình này dùng nhiệt từ mặt trời để làm nóng nước mà không tốn điện hay gas.", h: "Thiết bị lắp trên sân thượng." },
-            { q: "Tại sao Việt Nam có tiềm năng lớn về năng lượng mặt trời?", a: ["Vì có diện tích đất lớn", "Vì nằm ở vùng nhiệt đới nhiều nắng", "Vì có nhiều sông ngòi", "Vì dân số đông"], c: 1, e: "Vị trí địa lý thuận lợi mang lại số giờ nắng cao trong năm, đặc biệt là miền Nam.", h: "Lợi thế về thời tiết." },
-            { q: "Nhân tố nào sau đây quyết định vị trí đặt nhà máy điện gió?", a: ["Nơi có mật độ dân cư cao", "Nơi có tốc độ gió ổn định và mạnh", "Nơi gần các mỏ than", "Nơi có nhiều cây xanh"], c: 1, e: "Cần gió mạnh và đều (thường ở ven biển hoặc đỉnh núi) để quay tua-bin hiệu quả.", h: "Điều kiện cần thiết của gió." },
-            { q: "Sử dụng xe đạp điện sạc từ hệ thống điện gió sẽ giúp ích gì?", a: ["Tốn nhiều chi phí hơn xe máy", "Không có tác dụng bảo vệ môi trường", "Giảm đáng kể lượng phát thải khí CO2", "Làm tăng hiệu ứng nhà kính"], c: 2, e: "Đây là chu trình năng lượng sạch hoàn toàn từ nguồn phát đến tiêu thụ.", h: "Kết quả tích cực cho môi trường." }
-        ];
+    <div id="modal-rules" class="hidden fixed inset-0 z-[4000] bg-black/98 flex items-center justify-center p-6 text-white text-center">
+        <div class="bg-blue-900 border-4 border-yellow-500 p-6 rounded-[35px] w-full max-sm shadow-2xl text-white">
+            <h3 class="gold-text font-black text-xl mb-4 uppercase italic text-center"> THỂ LỆ TRÒ CHƠI AI LÀ TRIỆU PHÚ EDU 3.0</h3>
+            <div class="text-xs space-y-3 h-[40vh] overflow-y-auto pr-2 leading-relaxed font-medium text-left">
+                <p>1. Chinh phục 20 câu hỏi (12 Trắc nghiệm, 4 Đúng/Sai, 4 Trả lời ngắn).</p>
+                <p>2. Chế độ Luyện tập & Ghế nóng: Sai 1 câu dừng cuộc chơi ngay. Có 3 quyền trợ giúp: 50:50 (chỉ áp dụng từ câu 1 đến câu 12); Hỏi ý kiến khán giả; Gọi điện cho người thân; Từ câu hỏi thứ 13, có thêm quyền trợ giúp: hỏi ý kiến chuyên gia. </p>
+                <p>3. Nếu chọn KIỂM TRA: Phải làm đủ 20 câu mới được nộp bài.</p>
+                <p>4. Ở chế độ KIỂM TRA và NGỒI VÀO GHẾ NÓNG: Tuyệt đối không chuyển tab, hoặc chuyển sang màn hình khác, nếu vi phạm, hệ thống sẽ tự động thu bài.</p>
+            </div>
+            <button onclick="window.hideModal('modal-rules')" class="w-full mt-6 bg-yellow-500 text-black py-3 rounded-xl font-black shadow-xl uppercase font-black text-sm">Đóng</button>
+        </div>
+    </div>
 
-        let currentIdx = 0;
-        let selectedIdx = null;
-        let usedHelps = { h50: false, aud: false, call: false };
-        let currentModalState = "explanation"; 
+    <div id="modal-history" class="hidden fixed inset-0 z-[5000] bg-slate-100 overflow-y-auto p-5 text-black font-black">
+        <div class="flex justify-between items-center mb-6 border-b-2 border-slate-200 pb-4 sticky top-0 bg-slate-100 z-10 text-black">
+            <h3 class="text-xl font-black text-blue-900 uppercase italic text-center">Sổ tay tri thức</h3>
+            <button onclick="window.hideModal('modal-history')" class="bg-red-600 text-white px-6 py-2 rounded-full font-black text-xs uppercase shadow-lg text-white font-black">Đóng</button>
+        </div>
+        <div id="history-list" class="space-y-10 pb-20 text-left"></div>
+    </div>
 
-        function createFire(containerId, count) {
-            const container = document.getElementById(containerId);
-            for(let i=0; i<count; i++) {
-                const p = document.createElement('div');
-                p.className = 'fire-particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.animationDelay = Math.random() * 3 + 's';
-                p.style.animationDuration = (2 + Math.random() * 2) + 's';
-                container.appendChild(p);
-            }
+    <div id="milestone-modal" class="hidden milestone-modal">
+        <div class="milestone-box text-white">
+            <div class="milestone-title font-black text-white text-[16pt] uppercase mb-2">Chúc Mừng Bạn!</div>
+            <div id="ms-text" class="ms-text mb-8 leading-relaxed font-black text-white"></div>
+            <button onclick="window.closeMilestone()" class="bg-yellow-500 text-black px-12 py-4 rounded-full font-black text-xl shadow-2xl uppercase font-black text-white font-black">Tiếp tục hành trình</button>
+        </div>
+    </div>
+
+    <div id="modal-stats" class="hidden fixed inset-0 z-[1100] bg-black/95 flex items-center justify-center p-6 text-black text-center text-black">
+        <div class="bg-white p-8 rounded-[40px] w-full max-sm shadow-2xl text-center text-black">
+            <h3 class="text-xl font-black text-blue-900 mb-6 uppercase italic font-black">Biểu đồ chất lượng</h3>
+            <div id="stats-bars" class="space-y-4 text-left text-black"></div>
+            <button onclick="window.hideModal('modal-stats')" class="w-full mt-8 bg-red-600 text-white py-4 rounded-2xl font-black shadow-xl uppercase text-white font-black text-sm">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- FIREBASE ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyABRRwxTTwbPVTlsu6e22zTGPmMMHhJggY",
+        authDomain: "ailatrieuphuedu30.firebaseapp.com",
+        projectId: "ailatrieuphuedu30",
+        storageBucket: "ailatrieuphuedu30.firebasestorage.app",
+        messagingSenderId: "311640935009",
+        appId: "1:311640935009:web:359d3e1b71ffad26b17820"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = 'ailatrieuphuedu30bai50';
+
+    // --- UTILS ---
+    const pingSound = new Audio('https://www.soundjay.com/buttons/sounds/button-37a.mp3');
+    const playPing = () => { if(pingSound) { pingSound.currentTime = 0; pingSound.play().catch(()=>{}); } };
+    const shuffleArray = (arr) => { for(let i=arr.length-1; i>0; i--){ let j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; };
+
+    async function compressImage(base64Str) {
+        return new Promise((resolve) => {
+            const img = new Image(); img.src = base64Str;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                if (w > 120) { h *= 120/w; w = 120; }
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', 0.6));
+            };
+        });
+    }
+
+
+// // --- NGÂN HÀNG CÂU HỎI Bài 50. Năng lượng tái tạo và Biến đổi khí hậu ---
+
+const BANK_MCQ = [
+    {id: "50.1", q: "Trong các ví dụ sau đây, ví dụ nào là sử dụng năng lượng tái tạo?", a: ["Sử dụng than đá để đốt lò hơi trong công nghiệp.", "Sử dụng xăng dầu để chạy động cơ xe máy.", "Sử dụng pin mặt trời để cung cấp điện.", "Sử dụng khí gas để đun nấu thức ăn."], c: 2, ex: "Sử dụng năng lượng mặt trời giúp giảm phát thải khí nhà kính từ các nhà máy nhiệt điện."},
+    {id: "50.2", q: "Việc các hộ gia đình lắp đặt hệ thống nước nóng năng lượng mặt trời góp phần bảo vệ môi trường vì", a: ["nó làm giảm nhu cầu đốt nhiên liệu hóa thạch để tạo ra điện, giảm khí CO2.", "nó giúp nguồn nước trở nên tinh khiết và sạch hơn.", "năng lượng mặt trời có thể tiêu diệt các khí độc trong không khí.", "nó làm tăng lượng khí oxy trong bầu khí quyển tại địa phương."], c: 0, ex: "Sử dụng năng lượng mặt trời giúp giảm phát thải khí nhà kính từ các nhà máy nhiệt điện."},
+    {id: "50.3", q: "Nguồn năng lượng nào sau đây khi chuyển hóa thành điện năng KHÔNG gây ô nhiễm không khí bằng khí nhà kính?", a: ["Than đá.", "Dầu mỏ.", "Năng lượng gió.", "Khí thiên nhiên."], c: 2, ex: "Năng lượng gió là năng lượng sạch, không phát thải khí nhà kính khi hoạt động."},
+    {id: "50.4", q: "Khí nhà kính chính phát thải từ việc đốt nhiên liệu hóa thạch để giải phóng năng lượng là", a: ["N<sub>2</sub>.", "O<sub>2</sub>.", "CO<sub>2</sub>.", "H<sub>2</sub>."], c: 2, ex: "Carbon dioxide là sản phẩm chính của quá trình đốt cháy carbon trong nhiên liệu hóa thạch."},
+    {id: "50.5", q: "Trong hiện tượng lũ quét, sức phá hủy khủng khiếp của dòng nước bắt nguồn từ sự chuyển hóa", a: ["hóa năng của đất đá thành nhiệt năng.", "thế năng của nước ở trên cao thành động năng rất lớn.", "quang năng từ mặt trời thành nhiệt năng của nước.", "điện năng thành cơ năng của dòng chảy."], c: 1, ex: "Nước ở trên cao có thế năng hấp dẫn, khi đổ xuống dốc cao sẽ chuyển thành động năng mạnh."},
+    {id: "50.6", q: "Năng lượng tái tạo giúp làm chậm quá trình biến đổi khí hậu nhờ vào đặc điểm nào?", a: ["Giá thành sản xuất luôn thấp hơn than đá.", "Không phát thải khí nhà kính trong quá trình sử dụng.", "Làm tăng lượng băng ở hai đầu cực.", "Ngăn cản hiện tượng thủy triều dâng cao."], c: 1, ex: "Việc không phát thải CO<sub>2</sub> giúp ngăn chặn hiện tượng nóng lên toàn cầu."},
+    {id: "50.7", q: "Máy tính cầm tay chạy bằng pin năng lượng mặt trời là ví dụ về sử dụng", a: ["năng lượng hóa thạch.", "năng lượng tái tạo.", "năng lượng âm thanh.", "năng lượng hạt nhân."], c: 1, ex: "Ánh sáng mặt trời là nguồn năng lượng tái tạo."},
+    {id: "50.8", q: "Một trường học lắp đặt hệ thống đèn LED dùng năng lượng mặt trời. Việc này giúp", a: ["tăng lượng nhiệt tỏa ra môi trường xung quanh trường.", "giảm lượng khí thải gây hiệu ứng nhà kính từ các nhà máy điện.", "làm cho bầu trời xung quanh trường trở nên xanh hơn.", "tăng chi phí vận hành hàng tháng của nhà trường."], c: 1, ex: "Sử dụng điện mặt trời giúp giảm phụ thuộc vào nhiệt điện than."},
+    {id: "50.9", q: "Tại sao các quốc gia ven biển thường phát triển các cánh đồng điện gió?", a: ["Vì gió ở biển chứa nhiều hóa năng hơn đất liền.", "Để tận dụng nguồn năng lượng sạch, không gây khí nhà kính.", "Để ngăn chặn các cơn bão từ xa đổ bộ vào đất liền.", "Để làm cho sóng biển trở nên êm dịu hơn."], c: 1, ex: "Gió biển ổn định, giúp tạo ra điện năng mà không gây ô nhiễm."},
+    {id: "50.10", q: "Quá trình đốt xăng trong động cơ ô tô đã chuyển hóa", a: ["cơ năng thành hóa năng.", "hóa năng thành cơ năng và nhiệt năng.", "nhiệt năng thành quang năng.", "điện năng thành thế năng."], c: 1, ex: "Năng lượng hóa học trong xăng khi cháy giải phóng nhiệt và áp suất đẩy piston tạo ra cơ năng."},
+    {id: "50.11", q: "Để phòng chống lũ quét, việc bảo vệ rừng đầu nguồn có tác dụng gì xét về mặt năng lượng?", a: ["Cản trở sự chuyển hóa từ động năng thành thế năng.", "Làm giảm tốc độ dòng chảy, từ đó giảm động năng của nước lũ.", "Chuyển hóa toàn bộ thế năng của nước thành quang năng.", "Làm cho thế năng của nước ở trên núi biến mất hoàn toàn."], c: 1, ex: "Cây cối giữ nước và cản lực chảy, làm giảm vận tốc và sức công phá (động năng)."},
+    {id: "50.12", q: "Nhận định nào sau đây ĐÚNG về năng lượng tái tạo?", a: ["Chỉ có thể sử dụng vào ban ngày.", "Là nguồn năng lượng gây ra hiện tượng nóng lên toàn cầu.", "Góp phần tích cực vào việc thực hiện mục tiêu giảm phát thải ròng bằng '0'.", "Luôn có hại cho sức khỏe con người vì phát ra bức xạ lớn."], c: 2, ex: "Năng lượng tái tạo là chìa khóa để giảm phát thải khí nhà kính."},
+    {id: "50.13", q: "Việc dùng sức nước để quay cối giã gạo là ứng dụng của nguồn năng lượng nào?", a: ["Năng lượng tái tạo.", "Năng lượng không tái tạo.", "Năng lượng hóa học.", "Năng lượng điện."], c: 0, ex: "Năng lượng từ dòng nước (thủy năng) là năng lượng tái tạo."},
+    {id: "50.14", q: "Xe điện ngày càng phổ biến vì nó giúp giảm khí nhà kính, ĐẶC BIỆT là khi điện sạc cho xe được lấy từ", a: ["nhà máy nhiệt điện đốt than.", "các tấm pin năng lượng mặt trời.", "máy phát điện chạy bằng dầu.", "đốt rác thải nhựa."], c: 1, ex: "Khi dùng điện mặt trời để sạc xe điện, chu trình năng lượng là hoàn toàn sạch."},
+    {id: "50.15", q: "Lợi ích lớn nhất của việc thay thế các nhà máy nhiệt điện bằng các trang trại điện gió là", a: ["tạo ra nhiều tiếng ồn hơn cho khu vực xung quanh.", "làm cho đất đai xung quanh trở nên khô cằn hơn.", "cắt giảm lượng khí thải carbon dioxide vào bầu khí quyển.", "giúp cho chim chóc bay lượn dễ dàng hơn."], c: 2, ex: "Đây là mục tiêu quan trọng nhất trong cuộc chiến chống biến đổi khí hậu."},
+    {id: "50.16", q: "Nhiên liệu nào sau đây khi đốt cháy giải phóng năng lượng KHÔNG được xếp vào nhóm nhiên liệu hóa thạch?", a: ["Than bùn.", "Dầu thô.", "Củi khô.", "Khí đốt tự nhiên."], c: 2, ex: "Củi khô là sinh khối, có thể tái tạo trong thời gian ngắn, khác với nhiên liệu hóa thạch."},
+    {id: "50.17", q: "Tại sao lũ ống thường xảy ra ở những nơi có địa hình đồi núi dốc?", a: ["Vì ở đó mặt trời chiếu sáng mạnh hơn làm nước bốc hơi nhanh.", "Vì độ cao lớn làm nước có thế năng cao, dễ chuyển hóa thành động năng mạnh khi chảy dốc.", "Vì ở núi cao có nhiều hóa năng tích trữ trong các hang động.", "Vì không khí ở vùng núi có nhiều điện năng hơn vùng đồng bằng."], c: 1, ex: "Địa hình dốc làm tăng tốc độ chuyển hóa từ thế năng sang động năng."},
+    {id: "50.18", q: "“Hiệu ứng nhà kính” tăng cao dẫn đến hậu quả nào sau đây?", a: ["Trái Đất trở nên lạnh lẽo và đóng băng hoàn toàn.", "Nhiệt độ trung bình của Trái Đất tăng lên, gây biến đổi khí hậu.", "Lượng oxy trong không khí tăng đột biến khiến con người khó thở.", "Các đại dương trở nên cạn kiệt nước hoàn toàn."], c: 1, ex: "Khí nhà kính giữ nhiệt làm Trái Đất nóng lên."},
+    {id: "50.19", q: "Nguồn năng lượng nào sau đây được coi là năng lượng sạch và có khả năng phục hồi?", a: ["Than đá.", "Dầu mỏ.", "Địa nhiệt.", "Khí gas."], c: 2, ex: "Địa nhiệt là năng lượng từ trong lòng đất, là nguồn năng lượng tái tạo."},
+    {id: "50.20", q: "Hành động nào sau đây của học sinh góp phần giảm khí nhà kính dựa trên sự chuyển hóa năng lượng sạch?", a: ["Sử dụng đèn bàn chạy bằng pin sạc từ năng lượng mặt trời.", "Đốt rác thải nhựa trong khuôn viên nhà trường.", "Luôn bật tất cả các thiết bị điện trong lớp học dù không có người.", "Yêu cầu bố mẹ dùng xe máy chạy bằng xăng để đưa đón."], c: 0, ex: "Tận dụng quang năng thay vì điện lưới (có nguồn gốc từ nhiệt điện)."},
+    {id: "50.21", q: "Trong máy phát điện gió, bộ phận giúp chuyển hóa động năng của gió thành điện năng là", a: ["cánh quạt và máy phát điện.", "cột tháp bằng thép.", "dây dẫn điện truyền xuống đất.", "hệ thống phanh của tua-bin."], c: 0, ex: "Cánh quạt thu động năng gió để làm quay trục máy phát điện."},
+    {id: "50.22", q: "Sự tích tụ của khí nào sau đây trong khí quyển là nguyên nhân chính gây nóng lên toàn cầu?", a: ["O<sub>2</sub>.", "N<sub>2</sub>.", "CO<sub>2</sub>.", "Ar."], c: 2, ex: "Carbon dioxide là khí nhà kính phổ biến nhất từ các hoạt động đốt nhiên liệu của con người."},
+    {id: "50.23", q: "Lũ quét thường đi kèm với sạt lở đất vì", a: ["động năng của dòng nước quá yếu.", "thế năng của đất đá ở trên cao chuyển thành động năng khi nước làm lỏng liên kết đất.", "đất đá chứa nhiều điện năng hút nước vào.", "quang năng từ mặt trời làm đất đá bay lơ lửng."], c: 1, ex: "Nước mưa làm mất liên kết, trọng lực chuyển thế năng đất đá thành động năng trượt xuống."},
+    {id: "50.24", q: "Mục tiêu giảm phát thải khí nhà kính toàn cầu nhằm mục đích gì?", a: ["Để làm cho Trái Đất tối hơn vào ban đêm.", "Để hạn chế sự tăng nhiệt độ toàn cầu vượt quá ngưỡng an toàn.", "Để tăng lượng mưa axit có lợi cho cây trồng.", "Để làm cho các loài động vật ngủ đông lâu hơn."], c: 1, ex: "Giảm khí nhà kính để chống biến đổi khí hậu."}
+];
+
+const BANK_TF = [
+    {id: "50.25", q: "Một nhà máy điện tích hợp cả pin mặt trời và tuabin gió để cung cấp điện cho khu dân cư.", items: ["Pin mặt trời giúp chuyển hóa trực tiếp quang năng thành điện năng.", "Năng lượng gió là nguồn năng lượng tái tạo vì nó không bao giờ bị cạn kiệt.", "Việc sử dụng hai nguồn năng lượng này làm tăng lượng khí nhà kính so với nhà máy nhiệt điện.", "Điện năng tạo ra từ gió thực chất có nguồn gốc từ động năng của các khối khí chuyển động."], c: [true, true, false, true], ex: "Pin mặt trời hoạt động dựa trên hiệu ứng quang điện; Gió là vô tận; Năng lượng sạch giúp giảm khí nhà kính; Gió mang động năng."},
+    {id: "50.26", q: "Khi thảo luận về các nguồn năng lượng để bảo vệ khí hậu Trái Đất:", items: ["Đốt than đá giải phóng năng lượng hóa học giúp tạo điện nhưng sinh ra nhiều khí nhà kính.", "Năng lượng mặt trời có thể thay thế hoàn toàn than đá trong tương lai để chống biến đổi khí hậu.", "Chỉ có năng lượng gió mới không phát thải khí nhà kính, còn năng lượng mặt trời thì có.", "Biến đổi khí hậu là hiện tượng tự nhiên, không liên quan đến việc con người đốt nhiên liệu."], c: [true, true, false, false], ex: "Đốt than phát thải CO<sub>2</sub>; Xu hướng chuyển dịch năng lượng sạch là tất yếu; Cả gió và mặt trời đều sạch; Hoạt động con người là nguyên nhân chính."},
+    {id: "50.27", q: "Xét sự chuyển hóa năng lượng trong các hiện tượng tự nhiên và nhân tạo:", items: ["Trong lũ ống, sự tích tụ nước ở vùng cao tạo ra thế năng hấp dẫn lớn.", "Đốt cháy dầu mỏ giúp giải phóng hóa năng phục vụ giao thông vận tải.", "Chuyển hóa điện năng thành năng lượng gió giúp làm giảm phát thải khí nhà kính.", "Lũ quét gây thiệt hại nặng nề vì động năng của dòng nước và bùn đất rất lớn."], c: [true, true, false, true], ex: "Nước ở cao có thế năng lớn; Xăng dầu chứa hóa năng; Chuyển năng lượng gió thành điện năng mới giúp giảm khí nhà kính."},
+    {id: "50.28", q: "Liên quan đến vấn đề biến đổi khí hậu toàn cầu:", items: ["Việc phát triển năng lượng tái tạo giúp giảm sự nóng lên của bầu khí quyển.", "Lũ quét xảy ra ngày càng nhiều là một trong những biểu hiện của biến đổi khí hậu do con người gây ra.", "Khí nhà kính có tác dụng ngăn cản nhiệt từ Trái Đất thoát ra ngoài vũ trụ.", "Năng lượng mặt trời khi sử dụng sẽ phát thải khí CO<sub>2</sub> nhiều hơn cả nhiệt điện."], c: [true, true, true, false], ex: "Giảm hóa thạch giúp giảm nóng toàn cầu; BĐKH làm thiên tai cực đoan hơn; Khí nhà kính giữ nhiệt; NL mặt trời không phát thải CO<sub>2</sub>."},
+    {id: "50.29", q: "Về việc sử dụng năng lượng tái tạo và tác hại của các hiện tượng cực đoan:", items: ["Bình nước nóng năng lượng mặt trời sử dụng năng lượng không tái tạo.", "Lũ ống thường xảy ra bất ngờ, cuốn trôi nhà cửa do động năng của nước rất lớn.", "Sử dụng điện gió giúp hạn chế sự tăng cao của mực nước biển trong tương lai.", "Thế năng của nước lũ chuyển thành động năng là quá trình giải phóng năng lượng hóa học."], c: [false, true, true, false], ex: "Mặt trời là tái tạo; Lũ có động năng lớn; Điện gió giúp giảm BĐKH ngăn băng tan; Lũ là chuyển hóa cơ năng."},
+    {id: "50.30", q: "Khi một doanh nghiệp quyết định chuyển từ dùng lò hơi đốt than sang dùng điện mặt trời:", items: ["Doanh nghiệp đang sử dụng năng lượng tái tạo để sản xuất.", "Hành động này góp phần trực tiếp vào việc bảo vệ khí hậu Trái Đất.", "Chi phí ban đầu cho hệ thống mặt trời luôn thấp hơn nhiều so với mua than đá.", "Việc chuyển đổi này sẽ làm tăng đáng kể lượng khí thải nhà kính của doanh nghiệp."], c: [true, true, false, false], ex: "Pin mặt trời là năng lượng tái tạo; Giảm đốt than giúp bảo vệ khí hậu; Chi phí đầu tư ban đầu thường cao; Lượng khí thải sẽ giảm mạnh."},
+    {id: "50.31", q: "Trong bối cảnh Việt Nam đang đẩy mạnh phát triển năng lượng xanh:", items: ["Các tua-bin gió ngoài khơi giúp chuyển hóa cơ năng thành điện năng sạch.", "Đèn đường dùng pin năng lượng mặt trời là ví dụ về năng lượng tái tạo.", "Sử dụng năng lượng gió sẽ làm cạn kiệt nguồn gió của Trái Đất.", "Năng lượng tái tạo giúp giảm nhẹ các hậu quả của biến đổi khí hậu."], c: [true, true, false, true], ex: "Tua-bin gió thu động năng; Đèn mặt trời là NL tái tạo; Gió là vô tận; Năng lượng sạch giúp giảm nhẹ BĐKH."},
+    {id: "50.32", q: "Khi đánh giá các tác động môi trường của các nguồn năng lượng:", items: ["Khí CO<sub>2</sub> sinh ra từ việc đốt than đá là một loại khí gây hiệu ứng nhà kính.", "Điện gió và điện mặt trời có đặc điểm chung là không phát thải khí độc hại khi vận hành.", "Biến đổi khí hậu chỉ bị ảnh hưởng bởi năng lượng mặt trời chứ không phải năng lượng hóa thạch.", "Tận dụng năng lượng gió là một hình thức chuyển hóa động năng thành điện năng."], c: [true, true, false, true], ex: "CO<sub>2</sub> gây hiệu ứng nhà kính; Gió và mặt trời là năng lượng sạch; Nhiên liệu hóa thạch là thủ phạm chính gây BĐKH."}
+];
+
+const BANK_SHORT = [
+    {id: "50.33", q: "Một nhóm chuyên gia môi trường đánh giá về mối liên hệ giữa năng lượng và các hiện tượng thiên tai: 1. Hiện tượng lũ quét gây thiệt hại lớn do sự chuyển hóa từ thế năng hấp dẫn sang động năng mạnh của dòng nước. 2. Việc sử dụng xăng dầu trong giao thông giải phóng khí nhà kính, góp phần làm tăng nhiệt độ Trái Đất. 3. Chuyển hóa năng lượng gió thành điện năng là quá trình phát thải ra lượng lớn khí các-bo-nic. 4. Lũ ống thường xảy ra ở vùng đồng bằng vì có địa hình bằng phẳng giúp nước chảy nhanh. 5. Việc đốt nhiên liệu hóa thạch cung cấp năng lượng hóa học nhưng lại gây hại cho tầng khí quyển. 6. Khi nước lũ chảy xuống dốc núi, thế năng của nước tăng dần lên vô hạn. Chọn các nhận định ĐÚNG (dãy số tăng dần).", c: "125", ex: "1: Đúng cơ chế lũ quét; 2: Đúng tác hại xăng dầu; 5: Đúng bản chất hóa thạch. 3 sai vì gió sạch; 4 sai vì lũ ở vùng núi; 6 sai vì thế năng giảm."},
+    {id: "50.34", q: "Về vấn đề năng lượng và sự biến đổi của khí hậu Trái Đất: 1. Năng lượng mặt trời và gió giúp giảm bớt lượng khí thải CO<sub>2</sub>, từ đó chống lại biến đổi khí hậu. 2. Đốt than đá để giải phóng hóa năng là cách duy nhất để bảo vệ môi trường hiện nay. 3. Sức mạnh phá hủy của lũ quét tỷ lệ thuận với lượng động năng mà dòng nước tích lũy được khi chảy dốc. 4. Biến đổi khí hậu làm tăng tần suất xảy ra các hiện tượng như lũ ống và lũ quét. 5. Khí nhà kính chỉ phát sinh từ quá trình quang hợp của cây xanh vào ban đêm. 6. Năng lượng tái tạo không có vai trò gì trong việc ngăn chặn hiện tượng nóng lên toàn cầu. Chọn các nhận định ĐÚNG (dãy số tăng dần).", c: "134", ex: "1: Đúng vai trò NL sạch; 3: Đúng cơ chế phá hủy của lũ; 4: Đúng hệ quả BĐKH. 2, 5, 6 sai kiến thức."},
+    {id: "50.35", q: "Một hội nghị khoa học thảo luận về các giải pháp năng lượng tái tạo: 1. Năng lượng địa nhiệt và thủy triều là những ví dụ về năng lượng tái tạo trong thực tế. 2. Việc sử dụng xe điện sạc bằng điện gió giúp giảm thiểu biến đổi khí hậu một cách hiệu quả. 3. Lũ quét có sức tàn phá mạnh mẽ do sự chuyển hóa cơ năng đột ngột của khối lượng nước lớn. 4. Năng lượng tái tạo giải phóng khí nhà kính nhiều hơn cả năng lượng không tái tạo. 5. Trồng rừng ở vùng núi cao giúp hấp thụ năng lượng mặt trời để ngăn chặn lũ ống. 6. Sử dụng pin mặt trời là một cách tận dụng nguồn quang năng vô tận từ thiên nhiên. Chọn các nhận định ĐÚNG (dãy số tăng dần).", c: "1236", ex: "1: Đúng ví dụ NL tái tạo; 2: Đúng giải pháp BĐKH; 3: Đúng cơ chế lũ; 6: Đúng bản chất pin mặt trời. 4 sai vì NL tái tạo sạch; 5 sai cơ chế giữ nước của rừng."},
+    {id: "50.36", q: "Phân tích về sự tương tác giữa con người và năng lượng sạch: 1. Sử dụng năng lượng mặt trời giúp con người giảm bớt sự lệ thuộc vào các nguồn hóa thạch gây hại. 2. Việc lắp đặt tua-bin gió ngoài khơi là hình thức khai thác năng lượng tái tạo thường dùng. 3. Năng lượng sạch góp phần duy trì nồng độ khí nhà kính ở mức ổn định cho khí quyển. 4. Pin năng lượng mặt trời chuyển hóa điện năng thành hóa năng để thắp sáng đèn. 5. Thay thế nhiên liệu hóa thạch bằng năng lượng sạch là hành động tích cực chống biến đổi khí hậu. 6. Gió và mặt trời sẽ biến mất nếu con người khai thác quá nhiều năng lượng từ chúng. Chọn các nhận định ĐÚNG (dãy số tăng dần).", c: "1235", ex: "1, 2, 3, 5 đều đúng về vai trò và ứng dụng năng lượng sạch. 4 sai (Quang -> Điện); 6 sai vì chúng là vô tận."},
+    {id: "50.37", q: "Một dự án cộng đồng về sử dụng năng lượng tái tạo: 1. Dự án sử dụng máy sấy nông sản bằng năng lượng mặt trời để tiết kiệm điện. 2. Việc sử dụng điện mặt trời thay cho chạy máy phát điện dầu giúp giảm khí thải nhà kính. 3. Năng lượng gió được thu nhận thông qua cánh quạt để biến thành nhiệt năng sưởi ấm nước. 4. Sử dụng năng lượng tái tạo giúp bảo vệ đa dạng sinh học thông qua giảm biến đổi khí hậu. 5. Than đá là một ví dụ điển hình về nguồn năng lượng tái tạo thường dùng ở Việt Nam. 6. Điện gió là kết quả của sự chuyển hóa năng lượng cơ học của không khí thành điện năng. Chọn các nhận định ĐÚNG (dãy số tăng dần).", c: "1246", ex: "1, 2, 4, 6 đều đúng về thực tiễn và lợi ích năng lượng xanh. 3 sai mục đích tua-bin; 5 sai loại hình năng lượng."},
+    {id: "50.38", q: "Tìm hiểu về tác động của năng lượng đến môi trường: 1. Đốt dầu mỏ giải phóng hóa năng tích lũy từ hàng triệu năm, làm tăng nồng độ CO<sub>2</sub> trong khí quyển. 2. Năng lượng gió chuyển thành điện năng là quy trình không phát thải khí nhà kính. 3. Biến đổi khí hậu sẽ chấm dứt ngay lập tức nếu chúng ta trồng thêm một vài cái cây. 4. Sử dụng năng lượng mặt trời giúp bảo vệ hệ sinh thái bằng cách ổn định nhiệt độ toàn cầu. 5. Năng lượng hóa thạch càng được khai thác nhiều thì khí nhà kính càng giảm xuống. 6. Điện gió góp phần giảm nhẹ gánh nặng cho các nhà máy nhiệt điện than truyền thống. Chọn các nhận định ĐÚNG (dãy số tăng dần).", c: "1246", ex: "1, 2, 4, 6 phản ánh đúng thực trạng và giải pháp môi trường. 3 sai tính thực tế; 5 sai quan hệ nhân quả."},
+    {id: "50.39", q: "Trong các quá trình chuyển hóa năng lượng sau: 1. Đốt cháy than đá giải phóng năng lượng hóa học thành nhiệt năng và phát thải khí nhà kính. 2. Tua-bin gió quay tạo ra điện năng là một giải pháp giảm nhẹ ô nhiễm khí quyển. 3. Năng lượng hóa thạch có khả năng tự tái tạo nhanh chóng sau khi con người đốt cháy. 4. Sự gia tăng khí nhà kính chủ yếu do quá trình sử dụng năng lượng tái tạo gây ra. 5. Chuyển từ dùng xe xăng sang xe điện giúp cắt giảm lượng phát thải carbon trực tiếp. 6. Năng lượng gió bản chất là động năng của các khối khí trong bầu khí quyển. Chọn các nhận định ĐÚNG (dãy số tăng dần).", c: "1256", ex: "1, 2, 5, 6 là các nhận định khoa học chính xác. 3, 4 sai hoàn toàn kiến thức cơ bản."},
+    {id: "50.40", q: "Khi thực hiện các giải pháp tiết kiệm năng lượng: 1. Sử dụng xe đạp thay xe máy giúp giảm việc đốt nhiên liệu hóa thạch và giảm khí nhà kính. 2. Năng lượng mặt trời chuyển thành điện năng giúp thắp sáng mà không gây hại cho khí hậu. 3. Việc đốt rác thải nhựa giải phóng hóa năng là cách bảo vệ môi trường sạch sẽ nhất. 4. Năng lượng tái tạo là nguồn năng lượng duy nhất không tuân theo định luật bảo toàn năng lượng. 5. Giảm tiêu thụ điện lưới (từ nhiệt điện) bằng cách dùng thiết bị mặt trời giúp chống BĐKH. 6. Khí nhà kính tạo ra một 'tấm chăn' giữ nhiệt xung quanh Trái Đất. Chọn các nhận định ĐÚNG (dãy số tăng dần).", c: "1256", ex: "1, 2, 5, 6 đúng về hành động và cơ chế bảo vệ môi trường. 3 sai vì đốt rác nhựa độc hại; 4 sai vì định luật bảo toàn đúng cho mọi dạng năng lượng."}
+];
+    // --- STATE MANAGER ---
+    let state_data = {
+        user: { name: '', sbd: '', class: '', school: '', mcImg: '', playerImg: '' },
+        mode: '', questions: [], currentIdx: 0, score: 0, timer: 180, timerRef: null,
+        startTime: null, duration: 0, helps: { '5050': false, 'audience': false, 'call': false, 'expert': false },
+        isOver: false, adminData: [], userAnswers: Array(20).fill(null), targetDelId: null
+    };
+
+    // --- SYSTEM LOGIC ---
+    function renderLadder() {
+        const container = document.getElementById('ladder-container'); 
+        if(!container) return; container.innerHTML = '';
+        const scores = [1,2,3,4,5,5.4,5.8,6.2,6.6,7,7.3,7.6,7.9,8.2,8.5,8.8,9.1,9.4,9.7,10];
+        scores.forEach((s, i) => {
+            const div = document.createElement('div');
+            div.className = `ladder-row ${[4,9,19].includes(i) ? 'active' : ''}`;
+            div.id = `lad-${i}`; div.innerHTML = `<span>${i+1}</span><span>${s.toFixed(1)}</span>`;
+            container.appendChild(div);
+        });
+    }
+
+    function renderExamNav() {
+        const grid = document.getElementById('exam-grid'); 
+        if(!grid) return; grid.innerHTML = '';
+        for(let i=0; i<20; i++) {
+            const node = document.createElement('div');
+            node.className = `exam-node ${state_data.userAnswers[i] !== null ? 'done' : ''} ${state_data.currentIdx === i ? 'current' : ''}`;
+            node.innerText = i+1; node.onclick = () => { playPing(); state_data.currentIdx = i; loadQ(); };
+            grid.appendChild(node);
         }
+    }
 
-        function startSequence() {
-            const sbd = document.getElementById('in-sbd').value.trim();
-            const name = document.getElementById('in-name').value.trim();
-            const cls = document.getElementById('in-class').value.trim();
-            const sch = document.getElementById('in-school').value.trim();
+    function loadQ() {
+        const q = state_data.questions[state_data.currentIdx];
+        if(!q) return;
+        document.getElementById('q-number').innerText = `CÂU ${state_data.currentIdx + 1}`;
+        document.getElementById('q-score-ui').innerText = `ĐIỂM: ${state_data.score.toFixed(1)}`;
+        document.getElementById('q-text').innerText = q.q;
+        document.getElementById('q-hint-box')?.classList.add('hidden');
+        document.getElementById('btn-submit')?.classList.remove('hidden');
+        document.getElementById('btn-next')?.classList.add('hidden');
+        document.getElementById('h-expert').classList.toggle('hidden', state_data.currentIdx < 12);
+        document.getElementById('btn-stop').classList.toggle('hidden', state_data.currentIdx < 5 || state_data.mode === 'KIEM_TRA');
 
-            if(!sbd || !name || !cls || !sch) return; 
-            localStorage.setItem('user_renewable_v1', JSON.stringify({sbd, name, cls, sch}));
-            
-            document.getElementById('login-screen').classList.add('hidden');
-            const wish = document.getElementById('wish-screen');
-            wish.style.display = 'flex';
-            createFire('wish-fire-container', 40);
-
-            setTimeout(() => {
-                wish.style.display = 'none';
-                document.getElementById('game-screen').classList.remove('hidden');
-                initGame(sbd, name, cls, sch);
-            }, 3000);
-        }
-
-        function initGame(sbd, name, cls, sch) {
-            document.getElementById('p-name').innerText = `${name} (${cls})`;
-            document.getElementById('p-school').innerText = sch;
-            
-            const prog = document.getElementById('progress-container');
-            prog.innerHTML = '';
-            for(let i=0; i<20; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'progress-bar';
-                bar.id = `bar-${i}`;
-                prog.appendChild(bar);
-            }
-            loadQuestion();
-        }
-
-        function loadQuestion() {
-            const data = quizData[currentIdx];
-            document.getElementById('q-idx').innerText = `${currentIdx + 1}/20`;
-            document.getElementById(`bar-${currentIdx}`).classList.add('active');
-            document.getElementById('q-text').innerText = data.q;
-            
-            const grid = document.getElementById('options-grid');
-            grid.innerHTML = '';
-            selectedIdx = null;
-
-            data.a.forEach((txt, i) => {
-                const btn = document.createElement('div');
-                btn.className = 'option-btn';
-                btn.id = `opt-${i}`;
-                btn.innerHTML = `<span class="bg-green-600 text-black w-8 h-8 flex items-center justify-center rounded-full font-black mr-4 text-sm">${String.fromCharCode(65+i)}</span> <span>${txt}</span>`;
-                btn.onclick = () => {
-                    document.getElementById('s-click').play();
-                    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    selectedIdx = i;
-                };
-                grid.appendChild(btn);
+        const opts = document.getElementById('q-options'); opts.innerHTML = '';
+        
+        if (state_data.currentIdx < 12) {
+            q.a.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = `option-btn ${q.userChoice === i ? 'option-selected' : ''}`;
+                btn.innerHTML = `<span class="gold-text mr-3 font-black text-xs text-white">${String.fromCharCode(65+i)}.</span> ${opt}`;
+                btn.onclick = () => { playPing(); document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('option-selected')); btn.classList.add('option-selected'); q.userChoice = i; };
+                opts.appendChild(btn);
             });
-            window.scrollTo(0,0);
+        } else if (state_data.currentIdx < 16) {
+            if(!q.userChoice) q.userChoice = [null, null, null, null];
+            q.items.forEach((item, i) => {
+                const row = document.createElement('div');
+                row.className = 'p-2 glass rounded-xl flex items-center justify-between gap-1';
+                row.innerHTML = `<span class="flex-1 text-white text-sm font-bold text-left font-black">${String.fromCharCode(97+i)}) ${item}</span>
+                <div class="flex gap-1 shrink-0">
+                    <button id="tf-${i}-t" onclick="window.setTF(${i}, true)" style="font-size: 10pt !important;" class="tf-btn ${q.userChoice[i] === true ? 'bg-green-600' : 'bg-white/10'} text-white">ĐÚNG</button>
+                   <button id="tf-${i}-f" onclick="window.setTF(${i}, false)" style="font-size: 10pt !important;" class="tf-btn ${q.userChoice[i] === false ? 'bg-red-600' : 'bg-white/10'} text-white">SAI</button>
+                </div>`;
+                opts.appendChild(row);
+            });
+        } else {
+            const wrap = document.createElement('div');
+            wrap.className = 'flex flex-col items-center space-y-4';
+            wrap.innerHTML = `<p class="text-[10px] gold-text italic font-black text-center text-white">Nhập từ trái sang phải, nếu đáp án có dưới 4 kí tự thì các ô sau để trống; nếu là số thập phân thì nhập dấu phẩy (,), ví dụ 0,52</p>
+            <div class="flex gap-2">
+                <input type="text" maxlength="1" class="digit-box" oninput="if(this.value && this.nextElementSibling) this.nextElementSibling.focus()" value="${q.userVal?.[0]||''}">
+                <input type="text" maxlength="1" class="digit-box" oninput="if(this.value && this.nextElementSibling) this.nextElementSibling.focus()" value="${q.userVal?.[1]||''}">
+                <input type="text" maxlength="1" class="digit-box" oninput="if(this.value && this.nextElementSibling) this.nextElementSibling.focus()" value="${q.userVal?.[2]||''}">
+                <input type="text" maxlength="1" class="digit-box" value="${q.userVal?.[3]||''}">
+            </div>`;
+            opts.appendChild(wrap);
+        }
+        
+        if(state_data.mode !== 'KIEM_TRA') {
+            document.querySelectorAll('.ladder-row').forEach(r => r.classList.remove('active'));
+            document.getElementById(`lad-${state_data.currentIdx}`)?.classList.add('active');
+        } else renderExamNav();
+        startTimer();
+        if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    async function finishGame() {
+        if (state_data.mode === 'KIEM_TRA' && state_data.userAnswers.filter(a => a !== null).length < 20) return alert("Em chưa làm đủ 20 câu!");
+        state_data.isOver = true; clearInterval(state_data.timerRef);
+        document.getElementById('screen-game')?.classList.add('hidden');
+        document.getElementById('screen-result')?.classList.remove('hidden');
+        
+        const isEx = state_data.mode === 'KIEM_TRA';
+        if(isEx) state_data.score = state_data.userAnswers.reduce((sum, item) => sum + (item ? item.earned : 0), 0);
+        
+        const final = Math.min(10.0, Math.round(state_data.score * 10) / 10);
+        const resScore = document.getElementById('res-score');
+        if(resScore) resScore.innerText = final.toFixed(1);
+        
+        const resRank = document.getElementById('res-rank');
+        let rank = final >= 9 ? "XUẤT SẮC" : (final >= 8 ? "TỐT" : (final >= 5 ? "KHÁ" : (final >= 3.5 ? "ĐẠT" : "CHƯA ĐẠT")));
+        if(resRank) resRank.innerText = rank;
+        
+        const resSum = document.getElementById('res-summary');
+        if(resSum) resSum.innerHTML = `Chúc mừng Triệu phú tri thức <b>${state_data.user.name}</b>, SBD: ${state_data.user.sbd}, lớp ${state_data.user.class}, trường ${state_data.user.school}, ${final.toFixed(1)} điểm, xếp loại ${rank}.`;
+        
+        if(isEx) {
+            document.getElementById('scratch-msg').classList.remove('hidden');
+            document.getElementById('scratch-card-wrapper').classList.remove('hidden');
+            initScratchCard();
+        } else {
+            document.getElementById('scratch-card-wrapper').classList.remove('hidden');
+            document.getElementById('result-info-box').style.opacity = "1";
+            document.getElementById('btn-show-hist')?.classList.remove('hidden');
+            const canvas = document.getElementById('scratch-canvas');
+            if(canvas) canvas.style.display = 'none';
         }
 
-        function help5050() {
-            if(usedHelps.h50) return;
-            usedHelps.h50 = true;
-            document.getElementById('h-5050').classList.add('used');
-            const correct = quizData[currentIdx].c;
-            const wrongs = [0,1,2,3].filter(i => i !== correct).sort(() => Math.random() - 0.5);
-            document.getElementById(`opt-${wrongs[0]}`).classList.add('hidden');
-            document.getElementById(`opt-${wrongs[1]}`).classList.add('hidden');
-        }
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'results'), { 
+            ...state_data.user, 
+            score: final, 
+            mode: state_data.mode, 
+            duration: Math.floor((new Date() - state_data.startTime) / 1000), 
+            timestamp: serverTimestamp() 
+        });
+    }
 
-        function helpAudience() {
-            if(usedHelps.aud) return;
-            usedHelps.aud = true;
-            document.getElementById('h-aud').classList.add('used');
-            const correct = quizData[currentIdx].c;
-            let vals = [5, 5, 5, 5];
-            vals[correct] = 70 + Math.floor(Math.random() * 20);
-            let rem = 100 - vals[correct];
-            [0,1,2,3].forEach(i => { if(i !== correct) { let v = Math.floor(Math.random() * rem); vals[i] += v; rem -= v; }});
-            vals[0] += rem;
-            let html = '<div class="space-y-4 mt-4">';
-            vals.forEach((v, i) => { html += `<div class="text-left font-bold text-sm">${String.fromCharCode(65+i)}: ${v}% <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-1"><div class="bg-green-500 h-full" style="width: ${v}%"></div></div></div>`; });
-            html += '</div>';
-            currentModalState = "help";
-            showModal("Khán giả bình chọn", html, "👥", "Quay lại");
-        }
+    function initScratchCard() {
+        const wrapper = document.getElementById('scratch-card-wrapper');
+        const canvas = document.getElementById('scratch-canvas');
+        const infoBox = document.getElementById('result-info-box');
+        if(!canvas || !infoBox) return;
+        
+        infoBox.style.opacity = "0";
+        const ctx = canvas.getContext('2d');
+        const rect = infoBox.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        
+        ctx.fillStyle = '#94a3b8'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.font = 'bold 16px Roboto'; ctx.fillStyle = '#1e293b'; ctx.textAlign = 'center';
+        ctx.fillText('CÀO ĐỂ XEM ĐIỂM SỐ', canvas.width/2, canvas.height/2 + 5);
 
-        function helpCall() {
-            if(usedHelps.call) return;
-            usedHelps.call = true;
-            document.getElementById('h-call').classList.add('used');
-            const data = quizData[currentIdx];
-            currentModalState = "help";
-            showModal("Gọi cho người thân", `Bố mẹ tin chắc câu này là đáp án <b>${String.fromCharCode(65+data.c)}</b>. ${data.h} Con cứ vững tin nhé!`, "📞", "Quay lại");
-        }
+        let drawing = false;
+        const totalPixels = canvas.width * canvas.height;
 
-        function showModal(title, body, icon = "", btnText = "Tiếp tục") {
-            document.getElementById('m-title').innerText = title;
-            document.getElementById('m-status-icon').innerHTML = icon;
-            document.getElementById('m-body').innerHTML = body;
-            document.getElementById('m-btn').innerText = btnText;
-            document.getElementById('modal-overlay').style.display = 'flex';
-        }
-
-        function handleModalAction() {
-            document.getElementById('modal-overlay').style.display = 'none';
-            if(currentModalState === "explanation") {
-                if(currentIdx < quizData.length) loadQuestion();
-                else finishGame();
-            } else if (currentModalState === "end") {
-                finishGame();
-            }
-        }
-
-        function checkAnswer() {
-            if(selectedIdx === null) return;
-            const data = quizData[currentIdx];
-            currentModalState = "explanation";
+        const scratch = (e) => {
+            if(!drawing) return;
+            const r = canvas.getBoundingClientRect();
+            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - r.left;
+            const y = (e.clientY || (e.touches && e.touches[0].clientY)) - r.top;
+            ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.arc(x, y, 25, 0, 6.3); ctx.fill();
             
-            if(selectedIdx === data.c) {
-                document.getElementById('s-win').play();
-                currentIdx++;
-                showModal("Chính xác!", `<b>Chúc mừng bạn chọn: ${String.fromCharCode(65+data.c)}</b><br><br>${data.e}`, "✅", "Câu tiếp theo");
-            } else {
-                document.getElementById('s-lose').play();
-                const snapshotIdx = currentIdx;
-                currentIdx = 999; 
-                showModal("Rất tiếc!", `Bạn đã chọn ${String.fromCharCode(65+selectedIdx)} là sai.<br><b>Đáp án đúng: ${String.fromCharCode(65+data.c)}</b><br><br>${data.e}`, "❌", "Xem điểm số");
-                currentIdx = snapshotIdx;
-                currentModalState = "end";
-            }
-        }
-
-        function finishGame() {
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-            const score = (currentIdx / 20 * 10).toFixed(1);
-            document.getElementById('f-score').innerText = score;
-            document.getElementById('f-desc').innerText = `Thí sinh đã trả lời đúng ${currentIdx}/20 câu hỏi về chủ đề Năng lượng tái tạo.`;
-        }
-
-        window.onload = () => {
-            createFire('fire-container', 30);
-            const saved = localStorage.getItem('user_renewable_v1');
-            if(saved) {
-                const u = JSON.parse(saved);
-                document.getElementById('in-sbd').value = u.sbd;
-                document.getElementById('in-name').value = u.name;
-                document.getElementById('in-class').value = u.cls;
-                document.getElementById('in-school').value = u.sch;
-            }
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let count = 0; for(let i = 3; i < imageData.data.length; i += 4) { if(imageData.data[i] === 0) count++; }
+            const ratio = count / totalPixels;
+            
+            infoBox.style.opacity = Math.min(1, ratio * 2);
+            if(ratio > 0.45) document.getElementById('btn-show-hist')?.classList.remove('hidden');
         };
-    </script>
+        canvas.addEventListener('mousedown', () => drawing = true);
+        canvas.addEventListener('mouseup', () => drawing = false);
+        canvas.addEventListener('mousemove', scratch);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); drawing = true; });
+        canvas.addEventListener('touchend', () => drawing = false);
+        canvas.addEventListener('touchmove', scratch);
+    }
+
+    function startTimer() {
+        clearInterval(state_data.timerRef); state_data.timer = 180;
+        state_data.timerRef = setInterval(() => {
+            state_data.timer--; 
+            const el = document.getElementById('ui-timer');
+            if(el) el.innerText = `${state_data.timer}s`;
+            if (state_data.timer <= 0) { clearInterval(state_data.timerRef); finishGame(); }
+        }, 1000);
+    }
+
+    // --- WINDOW ATTACH ---
+    Object.assign(window, {
+        showModal: (id) => { playPing(); document.getElementById(id)?.classList.remove('hidden'); },
+        hideModal: (id) => { playPing(); document.getElementById(id)?.classList.add('hidden'); },
+        closeMilestone: () => { playPing(); document.getElementById('milestone-modal')?.classList.add('hidden'); },
+        confirmStop: () => { playPing(); if(confirm("Dừng cuộc chơi để bảo toàn điểm?")) finishGame(); },
+        enterNext: (e, nextId) => { if (e.key === 'Enter') { e.preventDefault(); document.getElementById(nextId)?.focus(); playPing(); } },
+        previewImg: async (input, targetId, type) => {
+            if (input.files?.[0]) {
+                const reader = new FileReader(); reader.onload = async e => {
+                    const compressed = await compressImage(e.target.result); document.getElementById(targetId).src = compressed;
+                    if(type === 'mc') state_data.user.mcImg = compressed; else state_data.user.playerImg = compressed;
+                }; reader.readAsDataURL(input.files[0]);
+            }
+        },
+        startGame: (mode) => {
+            playPing();
+            const n = document.getElementById('in-name').value, s = document.getElementById('in-sbd').value, c = document.getElementById('in-class').value, sc = document.getElementById('in-school').value;
+            if (!n || !s || !c || !sc) return alert("Em hãy nhập đủ thông tin nhé!");
+            state_data.user = { name: n, sbd: s, class: c, school: sc, mcImg: document.getElementById('view-mc').src, playerImg: document.getElementById('view-player').src };
+            localStorage.setItem('mil_v3_user_save_pro', JSON.stringify(state_data.user));
+            state_data.mode = mode; state_data.startTime = new Date(); state_data.userAnswers = Array(20).fill(null); state_data.currentIdx = 0; state_data.score = 0;
+            const q1 = shuffleArray([...BANK_MCQ]).slice(0, 12).map(q => { const o = q.a.map((v, i) => ({v, isCorrect: i === q.c})); shuffleArray(o); return {...q, a: o.map(x => x.v), c: o.findIndex(x => x.isCorrect)}; });
+            state_data.questions = [...q1, ...shuffleArray([...BANK_TF]).slice(0, 4), ...shuffleArray([...BANK_SHORT]).slice(0, 4)];
+            
+            if (mode === 'KIEM_TRA' || mode === 'GHE_NONG') {
+                try {
+                    const d = document.documentElement;
+                    if(d.requestFullscreen) d.requestFullscreen().catch(()=>{});
+                    else if(d.webkitRequestFullscreen) d.webkitRequestFullscreen().catch(()=>{});
+                } catch(e) {}
+            }
+
+            document.getElementById('screen-home')?.classList.add('hidden');
+            document.getElementById('screen-game')?.classList.remove('hidden');
+            document.getElementById('ui-p-name').innerText = n; document.getElementById('ui-p-info').innerText = `${s} | ${c} | ${sc}`;
+            document.getElementById('game-mc-img').src = state_data.user.mcImg; document.getElementById('game-player-img').src = state_data.user.playerImg;
+            const isEx = mode === 'KIEM_TRA';
+            document.getElementById('help-btns').classList.toggle('hidden', isEx);
+            document.getElementById('ladder-container').classList.toggle('hidden', isEx);
+            document.getElementById('exam-nav').classList.toggle('hidden', !isEx);
+            document.getElementById('q-score-ui').classList.toggle('hidden', isEx);
+            if(!isEx) renderLadder(); else renderExamNav();
+            loadQ();
+        },
+        useHelp: (type) => {
+            if(state_data.helps[type]) return; state_data.helps[type] = true; playPing();
+            document.getElementById(`h-${type}`).classList.add('opacity-30', 'grayscale');
+            const q = state_data.questions[state_data.currentIdx], box = document.getElementById('q-hint-box'); box.classList.remove('hidden');
+            if(type === '5050' && state_data.currentIdx < 12) {
+                const btns = document.querySelectorAll('.option-btn'); let count = 0;
+                [0,1,2,3].sort(()=>Math.random()-0.5).forEach(i => { if(i !== q.c && count < 2) { btns[i].style.visibility = 'hidden'; count++; } });
+            } else {
+                const currentLetter = String.fromCharCode(65 + q.c);
+                const advice = q.ex.replace(/Phương án [A-D] ĐÚNG/g, `Phương án ${currentLetter} ĐÚNG`);
+                box.innerHTML = `<b class="text-yellow-400 uppercase text-[10pt]">Trợ giúp giáo khoa:</b><br>${advice}`;
+            }
+        },
+        setTF: (idx, val) => { playPing(); state_data.questions[state_data.currentIdx].userChoice[idx] = val; loadQ(); },
+        submitAns: () => {
+            playPing(); const q = state_data.questions[state_data.currentIdx]; let earned = 0, isCorrect = false;
+            const ladderScores = [1,2,3,4,5,5.4,5.8,6.2,6.6,7,7.3,7.6,7.9,8.2,8.5,8.8,9.1,9.4,9.7,10.0];
+            if (state_data.currentIdx < 12) {
+                if (q.userChoice === undefined) return alert("Chọn đáp án!");
+                isCorrect = (q.userChoice === q.c);
+                earned = isCorrect ? (state_data.mode === 'KIEM_TRA' ? 0.4 : (ladderScores[state_data.currentIdx] - (state_data.currentIdx > 0 ? ladderScores[state_data.currentIdx-1] : 0))) : 0;
+            } else if (state_data.currentIdx < 16) {
+                if (!q.userChoice || q.userChoice.includes(null)) return alert("Hãy hoàn thành đủ 4 ý!");
+                let hits = 0; q.userChoice.forEach((v, i) => { if(v === q.c[i]) hits++; });
+                if (state_data.mode === 'KIEM_TRA') earned = [0, 0.2, 0.4, 0.6, 0.8][hits];
+                else earned = (hits === 4) ? (ladderScores[state_data.currentIdx] - (state_data.currentIdx > 0 ? ladderScores[state_data.currentIdx-1] : 0)) : 0;
+                isCorrect = (hits === 4);
+            } else {
+                const val = Array.from(document.querySelectorAll('.digit-box')).map(i => i.value).join('').replace('.', ',');
+                if (!val) return alert("Hãy nhập kết quả!");
+                q.userVal = val; isCorrect = (val === q.c);
+                earned = isCorrect ? (state_data.mode === 'KIEM_TRA' ? 0.5 : (ladderScores[state_data.currentIdx] - (state_data.currentIdx > 0 ? ladderScores[state_data.currentIdx-1] : 0))) : 0;
+            }
+            state_data.userAnswers[state_data.currentIdx] = { earned, isCorrect, userChoice: q.userChoice, userVal: q.userVal };
+            if (state_data.mode === 'KIEM_TRA') { if(state_data.currentIdx >= 19) finishGame(); else { state_data.currentIdx++; loadQ(); } }
+            else { if (!isCorrect) { const btns = document.querySelectorAll('.option-btn'); if(btns[q.c])btns[q.c].classList.add('option-correct'); if(btns[q.userChoice])btns[q.userChoice].classList.add('option-wrong'); setTimeout(finishGame, 1500); } 
+                else { state_data.score = ladderScores[state_data.currentIdx]; if(state_data.currentIdx === 19) finishGame(); else { 
+                    if(state_data.currentIdx==4||state_data.currentIdx==9){
+                        const h_txt = state_data.currentIdx==4?"Người thân & Khán giả":"Chuyên gia";
+                        document.getElementById('ms-text').innerHTML = `Vượt qua câu ${state_data.currentIdx+1}, bạn đã giành được ${state_data.score.toFixed(1)} điểm và nhận thêm sự trợ giúp từ ${h_txt}.`;
+                        window.showModal('milestone-modal');
+                    }
+                    document.getElementById('btn-submit').classList.add('hidden'); document.getElementById('btn-next').classList.remove('hidden'); 
+                } } }
+        },
+        nextQ: () => { playPing(); if(state_data.currentIdx < 19) { state_data.currentIdx++; loadQ(); } },
+        checkAdmin: () => { if(document.getElementById('admin-pass').value === '112233@@') { window.hideModal('modal-login'); showAdmin(); } else alert("Sai!"); },
+        exportExcel: () => { 
+            const dataToExport = state_data.adminData.map((d, i) => ({ "STT": i+1, "SBD": d.sbd, "Họ Tên": d.name, "Lớp": d.class, "Trường": d.school, "Chế độ": d.mode, "Điểm": d.score, "Thời gian làm bài (giây)": d.duration, "Nộp Lúc": d.timeStr }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "KetQua"); XLSX.writeFile(wb, "ket_qua_edu30.xlsx"); 
+        },
+        deleteRes: (id) => { playPing(); state_data.targetDelId = id; document.getElementById('modal-delete-confirm').classList.remove('hidden'); },
+        cancelDelete: () => { playPing(); document.getElementById('modal-delete-confirm').classList.add('hidden'); state_data.targetDelId = null; },
+        confirmDelete: async () => { if(document.getElementById('delete-pass-input').value === 'Admin123@') { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'results', state_data.targetDelId)); window.cancelDelete(); showAdmin(); } else alert("Sai!"); },
+        showHistory: () => {
+            const list = document.getElementById('history-list'); if(!list) return; list.innerHTML = '';
+            state_data.questions.forEach((q, i) => { const ua = state_data.userAnswers[i]; if(!ua) return;
+                const div = document.createElement('div'); div.className = `p-5 glass rounded-3xl border-l-8 ${ua.isCorrect ? 'border-green-500' : 'border-red-500'} mb-6 text-black bg-white shadow-lg text-left`;
+                const currentLetter = String.fromCharCode(65 + q.c);
+                const adviceFixed = q.ex.replace(/Phương án [A-D] ĐÚNG/g, `Phương án ${currentLetter} ĐÚNG`);
+                let h = `<div class="text-[9px] font-black uppercase mb-2 text-slate-400">CÂU ${i+1} (${ua.earned.toFixed(2)}đ)</div><div class="text-sm font-bold mb-4 text-left text-black font-black">${q.q}</div>`;
+                if (i < 12) h += `<div class="space-y-2">` + q.a.map((o, idx) => `<div class="p-3 rounded-xl border-2 ${idx === q.c ? 'bg-green-50 border-green-500' : (idx === ua.userChoice ? 'bg-red-50 border-red-500' : 'bg-slate-50')} text-xs font-bold text-left text-black font-black">${o}</div>`).join('') + `</div>`;
+                else if (i < 16) h += `<div class="space-y-2">` + q.items.map((it, idx) => `<div class="p-2 border-b text-xs ${ua.userChoice[idx] === q.c[idx] ? 'text-green-600' : 'text-red-600'} font-bold text-left font-black">${it} → <span class="uppercase">${ua.userChoice[idx]?'ĐÚNG':'SAI'}</span></div>`).join('') + `</div>`;
+                else h += `<div class="p-4 bg-slate-100 rounded-xl mb-4 text-xs font-black text-black text-left text-black font-black">BẠN NHẬP: ${ua.userVal} | ĐÁP ÁN: ${q.c}</div>`;
+                h += `<div class="p-3 bg-blue-50 rounded-xl text-xs italic text-blue-800 text-left font-black"><b>PHÂN TÍCH:</b> ${adviceFixed}</div>`;
+                div.innerHTML = h; list.appendChild(div);
+            });
+            window.showModal('modal-history');
+        },
+        sortAdmin: (key) => { state_data.adminData.sort((a, b) => (a[key] > b[key] ? 1 : -1)); renderAdminTable(); },
+        showStats: async () => {
+            let c = {XS:0,T:0,K:0,D:0,CD:0,tt:state_data.adminData.length}; state_data.adminData.forEach(d => { if(d.score >= 9) c.XS++; else if(d.score >= 8) c.T++; else if(d.score >= 5) c.K++; else if(d.score >= 3.5) c.D++; else c.CD++; });
+            const labels = {XS:'Xuất sắc',T:'Tốt',K:'Khá',D:'Đạt',CD:'Chưa đạt'}, colors = {XS:'bg-yellow-400',T:'bg-green-500',K:'bg-blue-500',D:'bg-orange-500',CD:'bg-red-600'};
+            document.getElementById('stats-bars').innerHTML = Object.keys(labels).map(k => { const p = (c[k]/(c.tt || 1) * 100).toFixed(1); return `<div class="mb-4 text-black"><div class="flex justify-between text-xs font-black text-left"><span>${labels[k]}</span><span>${p}%</span></div><div class="h-3 bg-slate-200 rounded-full overflow-hidden"><div class="${colors[k]} h-full transition-all duration-1000" style="width:${p}%"></div></div></div>`; }).join('');
+            window.showModal('modal-stats');
+        }
+    });
+
+    async function showAdmin() {
+        document.getElementById('screen-home')?.classList.add('hidden');
+        document.getElementById('screen-admin')?.classList.remove('hidden');
+        const snap = await getDocs(query(collection(db, 'artifacts', appId, 'public', 'data', 'results')));
+        state_data.adminData = []; snap.forEach(d => { const dt = d.data(); state_data.adminData.push({ id: d.id, ...dt, timeStr: dt.timestamp ? dt.timestamp.toDate().toLocaleString('vi-VN') : 'N/A' }); });
+        renderAdminTable();
+    }
+
+    function renderAdminTable() {
+        const tbody = document.getElementById('admin-tbody'); if(!tbody) return; tbody.innerHTML = '';
+        state_data.adminData.forEach((d, i) => { tbody.innerHTML += `<tr class="hover:bg-blue-50 text-[6.5px]"><td>${d.sbd}</td><td class="text-left font-bold text-blue-800">${d.name}</td><td>${d.class||''}</td><td>${d.school||''}</td><td class="font-black text-red-600">${(d.score || 0).toFixed(1)}</td><td><button onclick="window.deleteRes('${d.id}')" class="bg-red-600 text-white w-5 h-5 rounded-full font-black text-[7px]">X</button></td></tr>`; });
+    }
+
+    // --- STARTUP ---
+    signInAnonymously(auth);
+    onAuthStateChanged(auth, u => {
+        const saved = localStorage.getItem('mil_v3_user_save_pro');
+        if (saved) {
+            const data = JSON.parse(saved);
+            if(data.name) document.getElementById('in-name').value = data.name;
+            if(data.sbd) document.getElementById('in-sbd').value = data.sbd;
+            if(data.class) document.getElementById('in-class').value = data.class;
+            if(data.school) document.getElementById('in-school').value = data.school;
+            if(data.mcImg) document.getElementById('view-mc').src = data.mcImg;
+            if(data.playerImg) document.getElementById('view-player').src = data.playerImg;
+        }
+    });
+</script>
 </body>
 </html>
